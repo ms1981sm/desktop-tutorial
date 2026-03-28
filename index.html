@@ -2,18 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>ビーチテトリス</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: 'Arial', sans-serif;
       overflow: hidden;
       height: 100vh;
+      height: 100dvh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      touch-action: none;
     }
 
     /* ===== 海岸背景 ===== */
@@ -22,21 +25,15 @@
       inset: 0;
       z-index: 0;
     }
-
-    /* 空 */
     .sky {
       position: absolute;
       inset: 0;
       background: linear-gradient(180deg, #87ceeb 0%, #b0e0ff 55%, #f0e68c 70%, #f4a460 80%);
     }
-
-    /* 太陽 */
     .sun {
       position: absolute;
-      top: 8%;
-      right: 12%;
-      width: 80px;
-      height: 80px;
+      top: 8%; right: 12%;
+      width: 70px; height: 70px;
       background: radial-gradient(circle, #fffde7 30%, #ffe082 60%, #ffb300 100%);
       border-radius: 50%;
       box-shadow: 0 0 40px 20px rgba(255,200,0,0.4);
@@ -46,8 +43,6 @@
       0%,100% { box-shadow: 0 0 40px 20px rgba(255,200,0,0.4); }
       50%      { box-shadow: 0 0 60px 30px rgba(255,200,0,0.6); }
     }
-
-    /* 雲 */
     .cloud {
       position: absolute;
       background: rgba(255,255,255,0.85);
@@ -65,22 +60,17 @@
     .cloud-2 { top:18%; left:-300px; width:120px; height:35px; animation: cloudDrift 38s linear infinite 10s; }
     .cloud-2::before { width:60px; height:45px; top:-22px; left:15px; }
     .cloud-2::after  { width:50px; height:35px; top:-15px; left:60px; }
-    .cloud-3 { top:6%; left:-250px; width:100px; height:30px; animation: cloudDrift 45s linear infinite 20s; }
+    .cloud-3 { top:6%;  left:-250px; width:100px; height:30px; animation: cloudDrift 45s linear infinite 20s; }
     .cloud-3::before { width:55px; height:42px; top:-20px; left:10px; }
     .cloud-3::after  { width:45px; height:30px; top:-12px; left:50px; }
     @keyframes cloudDrift { from { left:-300px; } to { left:110%; } }
-
-    /* 砂浜 */
     .sand {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       height: 22%;
       background: linear-gradient(180deg, #f4e4a0 0%, #e8c97a 40%, #d4a843 100%);
       border-radius: 60% 60% 0 0 / 20px 20px 0 0;
     }
-    /* 砂粒模様 */
     .sand::before {
       content: '';
       position: absolute;
@@ -92,88 +82,96 @@
       background-position: 0 0, 10px 10px;
       border-radius: inherit;
     }
-
-    /* 海 */
     .ocean {
       position: absolute;
-      bottom: 18%;
-      left: 0;
-      right: 0;
+      bottom: 18%; left: 0; right: 0;
       height: 28%;
       background: linear-gradient(180deg,
-        rgba(0,150,200,0.7) 0%,
-        rgba(0,120,180,0.85) 40%,
-        rgba(0,100,160,0.95) 100%);
+        rgba(0,150,200,0.7) 0%, rgba(0,120,180,0.85) 40%, rgba(0,100,160,0.95) 100%);
       overflow: hidden;
     }
-
-    /* 波 */
-    .wave {
-      position: absolute;
-      left: -100%;
-      width: 300%;
-      height: 100%;
-    }
+    .wave { position: absolute; left: -100%; width: 300%; height: 100%; }
     .wave svg { width: 100%; height: auto; }
-
-    .wave-1 { bottom: 60%; opacity: 0.6; animation: waveMove 6s linear infinite; }
-    .wave-2 { bottom: 40%; opacity: 0.7; animation: waveMove 9s linear infinite reverse; }
-    .wave-3 { bottom: 15%; opacity: 0.9; animation: waveMove 7s linear infinite 2s; }
-
+    .wave-1 { bottom:60%; opacity:.6; animation: waveMove 6s linear infinite; }
+    .wave-2 { bottom:40%; opacity:.7; animation: waveMove 9s linear infinite reverse; }
+    .wave-3 { bottom:15%; opacity:.9; animation: waveMove 7s linear infinite 2s; }
     @keyframes waveMove { from { transform: translateX(0); } to { transform: translateX(33.3%); } }
-
-    /* ヤシの木 */
-    .palm {
-      position: absolute;
-      bottom: 18%;
-    }
-    .palm-trunk {
-      width: 14px;
-      background: linear-gradient(to top, #8B5E3C, #a0714f);
-      border-radius: 3px 3px 0 0;
-      transform-origin: bottom center;
-    }
-    .palm-1 { left: 5%; }
-    .palm-1 .palm-trunk { height: 120px; transform: rotate(-5deg); }
-    .palm-2 { left: 8%; }
-    .palm-2 .palm-trunk { height: 90px; transform: rotate(8deg); }
-    .palm-right { right: 5%; }
-    .palm-right .palm-trunk { height: 110px; transform: rotate(4deg); }
-
+    .palm { position: absolute; bottom: 18%; }
+    .palm-trunk { width:14px; background: linear-gradient(to top,#8B5E3C,#a0714f); border-radius:3px 3px 0 0; transform-origin:bottom center; }
+    .palm-1 { left:5%; } .palm-1 .palm-trunk { height:120px; transform:rotate(-5deg); }
+    .palm-2 { left:8%; } .palm-2 .palm-trunk { height:90px;  transform:rotate(8deg); }
+    .palm-right { right:5%; } .palm-right .palm-trunk { height:110px; transform:rotate(4deg); }
     .palm-leaf {
-      position: absolute;
-      top: 0;
-      width: 70px;
-      height: 20px;
-      background: linear-gradient(to right, #2d7a2d, #4caf50);
-      border-radius: 0 50% 50% 0;
-      transform-origin: left center;
+      position: absolute; top:0; width:70px; height:20px;
+      background: linear-gradient(to right,#2d7a2d,#4caf50);
+      border-radius:0 50% 50% 0; transform-origin:left center;
     }
-
-    /* カモメ */
-    .seagull {
-      position: absolute;
-      top: 25%;
-      font-size: 20px;
-      animation: gullFly 18s linear infinite;
-    }
-    .seagull-2 { top: 15%; font-size: 14px; animation-duration: 25s; animation-delay: 8s; }
-    @keyframes gullFly {
-      from { left: -60px; }
-      to   { left: 110%; }
-    }
+    .seagull { position:absolute; top:25%; font-size:20px; animation:gullFly 18s linear infinite; }
+    .seagull-2 { top:15%; font-size:14px; animation-duration:25s; animation-delay:8s; }
+    @keyframes gullFly { from{left:-60px} to{left:110%} }
 
     /* ===== ゲームUI ===== */
     #game-wrapper {
       position: relative;
       z-index: 10;
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: flex-start;
     }
 
+    /* ---- デスクトップ: 横並び ---- */
+    @media (min-width: 600px) {
+      #game-wrapper { flex-direction: row; }
+      #touch-controls { display: none; }
+      .panel { display: block; }
+    }
+
+    /* ---- モバイル: 縦並び ---- */
+    @media (max-width: 599px) {
+      body { justify-content: flex-start; padding-top: 6px; }
+      #game-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+      }
+      .panel { display: none !important; }
+      #mobile-header {
+        display: flex !important;
+      }
+    }
+
+    /* モバイル用スコアバー */
+    #mobile-header {
+      display: none;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: rgba(0,60,120,0.55);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 10px;
+      color: #fff;
+    }
+    .mh-item { text-align: center; }
+    .mh-label { font-size: 9px; color: #ffe082; letter-spacing: 1px; text-transform: uppercase; }
+    .mh-value { font-size: 18px; font-weight: bold; text-shadow: 0 0 8px rgba(255,220,80,0.8); }
+
+    /* キャンバスコンテナ */
     #canvas-container {
       position: relative;
+    }
+    @media (max-width: 599px) {
+      #canvas-container {
+        width: 100vw;
+        max-width: 300px;
+      }
+      #game {
+        width: 100% !important;
+        height: auto !important;
+      }
     }
 
     canvas {
@@ -181,65 +179,95 @@
       border: 3px solid rgba(255,255,255,0.8);
       border-radius: 8px;
       box-shadow: 0 8px 32px rgba(0,80,160,0.4), inset 0 0 20px rgba(0,100,200,0.1);
-      background: rgba(0, 80, 140, 0.35);
+      background: rgba(0,80,140,0.35);
       backdrop-filter: blur(4px);
     }
 
-    /* サイドパネル */
+    /* サイドパネル (デスクトップのみ) */
     .panel {
       background: rgba(0,60,120,0.55);
       backdrop-filter: blur(8px);
       border: 2px solid rgba(255,255,255,0.5);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       color: #fff;
-      min-width: 120px;
+      min-width: 110px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
-
     .panel h2 {
-      font-size: 13px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #ffe082;
-      margin-bottom: 10px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+      color: #ffe082; margin-bottom: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .score-value { font-size: 24px; font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(255,220,80,0.8); }
+    .score-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px; margin-bottom: 12px; }
+    #next-canvas {
+      border: 2px solid rgba(255,255,255,0.4); border-radius: 6px;
+      background: rgba(0,40,100,0.4); display: block; margin: 0 auto 10px;
+    }
+    .key-hint { font-size: 11px; color: rgba(255,255,255,0.75); line-height: 1.8; }
+    .key-hint span {
+      display: inline-block; background: rgba(255,255,255,0.2);
+      border-radius: 3px; padding: 1px 5px; font-weight: bold; color: #fff;
     }
 
-    .score-value {
-      font-size: 26px;
-      font-weight: bold;
+    /* ===== タッチコントロール ===== */
+    #touch-controls {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 300px;
+      padding: 4px 8px 8px;
+    }
+    @media (max-width: 599px) {
+      #touch-controls { display: flex; }
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .ctrl-btn {
+      width: 64px;
+      height: 56px;
+      background: rgba(0,80,160,0.6);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255,255,255,0.55);
+      border-radius: 14px;
       color: #fff;
-      text-shadow: 0 0 10px rgba(255,220,80,0.8);
+      font-size: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: transform 0.08s, background 0.08s;
+      -webkit-touch-callout: none;
     }
-
-    .score-label {
-      font-size: 11px;
+    .ctrl-btn span.lbl {
+      font-size: 9px;
+      letter-spacing: 0.5px;
       color: rgba(255,255,255,0.7);
       margin-top: 2px;
-      margin-bottom: 14px;
     }
-
-    #next-canvas {
-      border: 2px solid rgba(255,255,255,0.4);
-      border-radius: 6px;
-      background: rgba(0,40,100,0.4);
-      display: block;
-      margin: 0 auto 10px;
+    .ctrl-btn:active, .ctrl-btn.pressed {
+      background: rgba(0,120,220,0.8);
+      transform: scale(0.93);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-
-    .key-hint {
-      font-size: 11px;
-      color: rgba(255,255,255,0.75);
-      line-height: 1.8;
+    /* 落下ボタンは大きめ */
+    #btn-drop {
+      width: 80px;
+      background: rgba(200,80,0,0.6);
+      border-color: rgba(255,160,60,0.7);
     }
-    .key-hint span {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      border-radius: 3px;
-      padding: 1px 5px;
-      font-weight: bold;
-      color: #fff;
+    #btn-drop:active, #btn-drop.pressed {
+      background: rgba(240,100,0,0.85);
     }
 
     /* オーバーレイ */
@@ -256,33 +284,16 @@
       color: #fff;
       z-index: 20;
     }
-    #overlay h1 {
-      font-size: 28px;
-      color: #ffe082;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      margin-bottom: 8px;
-    }
-    #overlay p {
-      font-size: 14px;
-      color: rgba(255,255,255,0.85);
-      margin-bottom: 20px;
-    }
+    #overlay h1 { font-size: 26px; color: #ffe082; text-shadow: 0 2px 8px rgba(0,0,0,0.6); margin-bottom: 8px; }
+    #overlay p  { font-size: 13px; color: rgba(255,255,255,0.85); margin-bottom: 20px; }
     #overlay button {
       background: linear-gradient(135deg, #29b6f6, #0288d1);
-      color: #fff;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 25px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
+      color: #fff; border: none; padding: 12px 32px;
+      border-radius: 25px; font-size: 17px; font-weight: bold; cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,150,255,0.4);
       transition: transform 0.1s, box-shadow 0.1s;
     }
-    #overlay button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,150,255,0.6);
-    }
+    #overlay button:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,150,255,0.6); }
     #overlay button:active { transform: translateY(0); }
   </style>
 </head>
@@ -295,37 +306,26 @@
   <div class="cloud cloud-1"></div>
   <div class="cloud cloud-2"></div>
   <div class="cloud cloud-3"></div>
-
-  <!-- カモメ -->
   <div class="seagull">🕊</div>
   <div class="seagull seagull-2">🕊</div>
-
-  <!-- 海 -->
   <div class="ocean">
     <div class="wave wave-1">
       <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <path d="M0,40 C150,10 300,70 450,40 C600,10 750,70 900,40 C1050,10 1150,50 1200,40 L1200,80 L0,80 Z"
-              fill="rgba(255,255,255,0.3)"/>
+        <path d="M0,40 C150,10 300,70 450,40 C600,10 750,70 900,40 C1050,10 1150,50 1200,40 L1200,80 L0,80 Z" fill="rgba(255,255,255,0.3)"/>
       </svg>
     </div>
     <div class="wave wave-2">
       <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <path d="M0,50 C200,20 400,70 600,45 C800,20 1000,65 1200,45 L1200,80 L0,80 Z"
-              fill="rgba(255,255,255,0.25)"/>
+        <path d="M0,50 C200,20 400,70 600,45 C800,20 1000,65 1200,45 L1200,80 L0,80 Z" fill="rgba(255,255,255,0.25)"/>
       </svg>
     </div>
     <div class="wave wave-3">
       <svg viewBox="0 0 1200 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <path d="M0,30 C100,10 250,55 400,30 C550,5 700,55 850,30 C1000,5 1100,45 1200,30 L1200,60 L0,60 Z"
-              fill="rgba(255,255,255,0.35)"/>
+        <path d="M0,30 C100,10 250,55 400,30 C550,5 700,55 850,30 C1000,5 1100,45 1200,30 L1200,60 L0,60 Z" fill="rgba(255,255,255,0.35)"/>
       </svg>
     </div>
   </div>
-
-  <!-- 砂浜 -->
   <div class="sand"></div>
-
-  <!-- ヤシの木 左 -->
   <div class="palm palm-1">
     <div class="palm-trunk">
       <div class="palm-leaf" style="transform:rotate(-60deg) translateY(-8px)"></div>
@@ -341,8 +341,6 @@
       <div class="palm-leaf" style="transform:rotate(50deg) translateY(-8px)"></div>
     </div>
   </div>
-
-  <!-- ヤシの木 右 -->
   <div class="palm palm-right">
     <div class="palm-trunk">
       <div class="palm-leaf" style="transform:rotate(-55deg) translateY(-8px)"></div>
@@ -353,24 +351,27 @@
   </div>
 </div>
 
+<!-- モバイルスコアバー -->
+<div id="mobile-header">
+  <div class="mh-item"><div class="mh-label">スコア</div><div class="mh-value" id="m-score">0</div></div>
+  <div class="mh-item"><div class="mh-label">レベル</div><div class="mh-value" id="m-level">1</div></div>
+  <div class="mh-item"><div class="mh-label">ライン</div><div class="mh-value" id="m-lines">0</div></div>
+  <div class="mh-item" style="min-width:60px">
+    <div class="mh-label">ネクスト</div>
+    <canvas id="next-canvas-mobile" width="60" height="60"></canvas>
+  </div>
+</div>
+
 <!-- ゲーム本体 -->
 <div id="game-wrapper">
-  <!-- サイドパネル左 -->
+  <!-- 左パネル (デスクトップ) -->
   <div class="panel">
-    <h2>スコア</h2>
-    <div class="score-value" id="score">0</div>
-    <div class="score-label">点</div>
-
-    <h2>レベル</h2>
-    <div class="score-value" id="level">1</div>
-    <div class="score-label">LV</div>
-
-    <h2>ライン</h2>
-    <div class="score-value" id="lines">0</div>
-    <div class="score-label">行</div>
+    <h2>スコア</h2><div class="score-value" id="score">0</div><div class="score-label">点</div>
+    <h2>レベル</h2><div class="score-value" id="level">1</div><div class="score-label">LV</div>
+    <h2>ライン</h2><div class="score-value" id="lines">0</div><div class="score-label">行</div>
   </div>
 
-  <!-- ゲームキャンバス -->
+  <!-- キャンバス -->
   <div id="canvas-container">
     <canvas id="game" width="300" height="600"></canvas>
     <div id="overlay">
@@ -380,11 +381,10 @@
     </div>
   </div>
 
-  <!-- サイドパネル右 -->
+  <!-- 右パネル (デスクトップ) -->
   <div class="panel">
     <h2>ネクスト</h2>
     <canvas id="next-canvas" width="100" height="100"></canvas>
-
     <h2>操作</h2>
     <div class="key-hint">
       <span>←→</span> 移動<br>
@@ -396,25 +396,33 @@
   </div>
 </div>
 
+<!-- タッチコントロール (モバイル) -->
+<div id="touch-controls">
+  <div class="btn-row">
+    <div class="ctrl-btn" id="btn-rotate">↻<span class="lbl">回転</span></div>
+    <div class="ctrl-btn" id="btn-drop">⬇<span class="lbl">落下</span></div>
+  </div>
+  <div class="btn-row">
+    <div class="ctrl-btn" id="btn-left">◀<span class="lbl">左</span></div>
+    <div class="ctrl-btn" id="btn-down">▼<span class="lbl">加速</span></div>
+    <div class="ctrl-btn" id="btn-right">▶<span class="lbl">右</span></div>
+  </div>
+</div>
+
 <script>
 const COLS = 10, ROWS = 20, BLOCK = 30;
 const canvas  = document.getElementById('game');
 const ctx     = canvas.getContext('2d');
 const nextCvs = document.getElementById('next-canvas');
-const nctx    = nextCvs.getContext('2d');
+const nctx    = nextCvs ? nextCvs.getContext('2d') : null;
+const nextCvsM = document.getElementById('next-canvas-mobile');
+const nctxM   = nextCvsM ? nextCvsM.getContext('2d') : null;
 
-// ===== ビーチテーマカラー =====
 const COLORS = [
   null,
-  '#FF6B6B', // I - サンゴ赤
-  '#4ECDC4', // O - エメラルド
-  '#45B7D1', // T - 海の青
-  '#96CEB4', // S - 波緑
-  '#FFEAA7', // Z - 砂色
-  '#DDA0DD', // J - 貝殻紫
-  '#F0A500', // L - 夕日オレンジ
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+  '#FFEAA7', '#DDA0DD', '#F0A500',
 ];
-
 const SHAPES = {
   I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
   O: [[2,2],[2,2]],
@@ -426,55 +434,40 @@ const SHAPES = {
 };
 const SHAPE_KEYS = Object.keys(SHAPES);
 
-// ===== ゲーム状態 =====
 let board, piece, nextPiece, score, level, lines, gameOver, paused, animId, dropInterval, lastTime;
 
 function createBoard() {
   return Array.from({length: ROWS}, () => Array(COLS).fill(0));
 }
-
 function randomPiece() {
   const key = SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
   const matrix = SHAPES[key].map(r => [...r]);
-  return {
-    matrix,
-    pos: { x: Math.floor(COLS / 2) - Math.floor(matrix[0].length / 2), y: 0 },
-  };
+  return { matrix, pos: { x: Math.floor(COLS/2) - Math.floor(matrix[0].length/2), y: 0 } };
 }
-
 function rotate(matrix) {
   const n = matrix.length;
-  return matrix[0].map((_, c) => matrix.map((_, r) => matrix[n - 1 - r][c]));
+  return matrix[0].map((_, c) => matrix.map((_, r) => matrix[n-1-r][c]));
 }
-
 function collide(board, piece) {
-  for (let r = 0; r < piece.matrix.length; r++) {
+  for (let r = 0; r < piece.matrix.length; r++)
     for (let c = 0; c < piece.matrix[r].length; c++) {
       if (!piece.matrix[r][c]) continue;
       const nx = piece.pos.x + c, ny = piece.pos.y + r;
       if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
       if (ny >= 0 && board[ny][nx]) return true;
     }
-  }
   return false;
 }
-
 function merge(board, piece) {
   piece.matrix.forEach((row, r) =>
-    row.forEach((val, c) => {
-      if (val) board[piece.pos.y + r][piece.pos.x + c] = val;
-    })
-  );
+    row.forEach((val, c) => { if (val) board[piece.pos.y+r][piece.pos.x+c] = val; }));
 }
-
 function clearLines() {
   let cleared = 0;
-  for (let r = ROWS - 1; r >= 0; r--) {
+  for (let r = ROWS-1; r >= 0; r--) {
     if (board[r].every(c => c !== 0)) {
-      board.splice(r, 1);
-      board.unshift(Array(COLS).fill(0));
-      cleared++;
-      r++;
+      board.splice(r, 1); board.unshift(Array(COLS).fill(0));
+      cleared++; r++;
     }
   }
   if (cleared > 0) {
@@ -482,15 +475,16 @@ function clearLines() {
     score += (pts[cleared] || 800) * level;
     lines += cleared;
     level = Math.floor(lines / 10) + 1;
-    dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    dropInterval = Math.max(100, 1000 - (level-1)*90);
     updateUI();
   }
 }
-
 function updateUI() {
-  document.getElementById('score').textContent = score.toLocaleString();
-  document.getElementById('level').textContent = level;
-  document.getElementById('lines').textContent = lines;
+  ['score','level','lines'].forEach(id => {
+    const v = id === 'score' ? score.toLocaleString() : id === 'level' ? level : lines;
+    const el = document.getElementById(id); if (el) el.textContent = v;
+    const em = document.getElementById('m-' + id); if (em) em.textContent = v;
+  });
 }
 
 // ===== 描画 =====
@@ -498,79 +492,56 @@ function drawBlock(context, x, y, colorIdx, alpha = 1) {
   const color = COLORS[colorIdx];
   const bx = x * BLOCK, by = y * BLOCK;
   context.globalAlpha = alpha;
-
-  // メイン面
   context.fillStyle = color;
-  context.fillRect(bx + 1, by + 1, BLOCK - 2, BLOCK - 2);
-
-  // ハイライト (上・左)
+  context.fillRect(bx+1, by+1, BLOCK-2, BLOCK-2);
   context.fillStyle = 'rgba(255,255,255,0.45)';
-  context.fillRect(bx + 1, by + 1, BLOCK - 2, 4);
-  context.fillRect(bx + 1, by + 1, 4, BLOCK - 2);
-
-  // シャドウ (下・右)
+  context.fillRect(bx+1, by+1, BLOCK-2, 4);
+  context.fillRect(bx+1, by+1, 4, BLOCK-2);
   context.fillStyle = 'rgba(0,0,0,0.25)';
-  context.fillRect(bx + 1, by + BLOCK - 5, BLOCK - 2, 4);
-  context.fillRect(bx + BLOCK - 5, by + 1, 4, BLOCK - 2);
-
+  context.fillRect(bx+1, by+BLOCK-5, BLOCK-2, 4);
+  context.fillRect(bx+BLOCK-5, by+1, 4, BLOCK-2);
   context.globalAlpha = 1;
 }
-
 function drawGhost() {
   const ghost = { matrix: piece.matrix, pos: { ...piece.pos } };
   while (!collide(board, ghost)) ghost.pos.y++;
   ghost.pos.y--;
   ghost.matrix.forEach((row, r) =>
-    row.forEach((val, c) => {
-      if (val) drawBlock(ctx, ghost.pos.x + c, ghost.pos.y + r, val, 0.25);
-    })
-  );
+    row.forEach((val, c) => { if (val) drawBlock(ctx, ghost.pos.x+c, ghost.pos.y+r, val, 0.25); }));
 }
-
 function drawBoard() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // グリッド線
   ctx.strokeStyle = 'rgba(255,255,255,0.07)';
   ctx.lineWidth = 0.5;
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      ctx.strokeRect(c * BLOCK, r * BLOCK, BLOCK, BLOCK);
-    }
-  }
-
-  // 固定ブロック
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      ctx.strokeRect(c*BLOCK, r*BLOCK, BLOCK, BLOCK);
   board.forEach((row, r) =>
-    row.forEach((val, c) => { if (val) drawBlock(ctx, c, r, val); })
-  );
+    row.forEach((val, c) => { if (val) drawBlock(ctx, c, r, val); }));
 }
-
 function drawPiece() {
   piece.matrix.forEach((row, r) =>
-    row.forEach((val, c) => {
-      if (val) drawBlock(ctx, piece.pos.x + c, piece.pos.y + r, val);
-    })
-  );
+    row.forEach((val, c) => { if (val) drawBlock(ctx, piece.pos.x+c, piece.pos.y+r, val); }));
 }
-
 function drawNext() {
-  nctx.clearRect(0, 0, nextCvs.width, nextCvs.height);
-  const B = 20;
-  const rows = nextPiece.matrix.length;
-  const cols = nextPiece.matrix[0].length;
-  const ox = Math.floor((5 - cols) / 2);
-  const oy = Math.floor((5 - rows) / 2);
-  nextPiece.matrix.forEach((row, r) =>
-    row.forEach((val, c) => {
-      if (!val) return;
-      const color = COLORS[val];
-      const bx = (ox + c) * B, by = (oy + r) * B;
-      nctx.fillStyle = color;
-      nctx.fillRect(bx + 1, by + 1, B - 2, B - 2);
-      nctx.fillStyle = 'rgba(255,255,255,0.4)';
-      nctx.fillRect(bx + 1, by + 1, B - 2, 3);
-    })
-  );
+  [nctx, nctxM].forEach((nc, i) => {
+    if (!nc) return;
+    const cvs = i === 0 ? nextCvs : nextCvsM;
+    const B = i === 0 ? 20 : 12;
+    nc.clearRect(0, 0, cvs.width, cvs.height);
+    const rows = nextPiece.matrix.length, cols = nextPiece.matrix[0].length;
+    const gridSize = i === 0 ? 5 : 4;
+    const ox = Math.floor((gridSize - cols) / 2), oy = Math.floor((gridSize - rows) / 2);
+    nextPiece.matrix.forEach((row, r) =>
+      row.forEach((val, c) => {
+        if (!val) return;
+        const bx = (ox+c)*B, by = (oy+r)*B;
+        nc.fillStyle = COLORS[val];
+        nc.fillRect(bx+1, by+1, B-2, B-2);
+        nc.fillStyle = 'rgba(255,255,255,0.4)';
+        nc.fillRect(bx+1, by+1, B-2, 3);
+      }));
+  });
 }
 
 // ===== ゲームループ =====
@@ -586,15 +557,10 @@ function drop(ts) {
       piece = nextPiece;
       nextPiece = randomPiece();
       drawNext();
-      if (collide(board, piece)) {
-        endGame();
-        return;
-      }
+      if (collide(board, piece)) { endGame(); return; }
     }
   }
-  drawBoard();
-  drawGhost();
-  drawPiece();
+  drawBoard(); drawGhost(); drawPiece();
   animId = requestAnimationFrame(drop);
 }
 
@@ -603,10 +569,8 @@ function startGame() {
   score = 0; level = 1; lines = 0;
   dropInterval = 1000; lastTime = null;
   gameOver = false; paused = false;
-  piece = randomPiece();
-  nextPiece = randomPiece();
-  updateUI();
-  drawNext();
+  piece = randomPiece(); nextPiece = randomPiece();
+  updateUI(); drawNext();
   document.getElementById('overlay').style.display = 'none';
   if (animId) cancelAnimationFrame(animId);
   animId = requestAnimationFrame(drop);
@@ -625,7 +589,23 @@ function endGame() {
   document.getElementById('start-btn').addEventListener('click', startGame);
 }
 
-// ===== キー操作 =====
+// ===== アクション =====
+function actionLeft()   { if (!piece||gameOver||paused) return; piece.pos.x--; if (collide(board,piece)) piece.pos.x++; }
+function actionRight()  { if (!piece||gameOver||paused) return; piece.pos.x++; if (collide(board,piece)) piece.pos.x--; }
+function actionDown()   { if (!piece||gameOver||paused) return; piece.pos.y++; if (collide(board,piece)) piece.pos.y--; lastTime=null; }
+function actionRotate() {
+  if (!piece||gameOver||paused) return;
+  const rotated = rotate(piece.matrix), prev = piece.matrix;
+  piece.matrix = rotated;
+  if (collide(board, piece)) piece.matrix = prev;
+}
+function actionDrop() {
+  if (!piece||gameOver||paused) return;
+  while (!collide(board, piece)) piece.pos.y++;
+  piece.pos.y--;
+}
+
+// ===== キーボード =====
 document.addEventListener('keydown', e => {
   if (gameOver) return;
   if (e.key === 'p' || e.key === 'P') {
@@ -636,33 +616,80 @@ document.addEventListener('keydown', e => {
   }
   if (paused) return;
   switch (e.key) {
-    case 'ArrowLeft':
-      piece.pos.x--;
-      if (collide(board, piece)) piece.pos.x++;
-      break;
-    case 'ArrowRight':
-      piece.pos.x++;
-      if (collide(board, piece)) piece.pos.x--;
-      break;
-    case 'ArrowDown':
-      piece.pos.y++;
-      if (collide(board, piece)) { piece.pos.y--; }
-      lastTime = null;
-      break;
-    case 'ArrowUp': {
-      const rotated = rotate(piece.matrix);
-      const prev = piece.matrix;
-      piece.matrix = rotated;
-      if (collide(board, piece)) piece.matrix = prev;
-      break;
-    }
-    case ' ':
-      e.preventDefault();
-      while (!collide(board, piece)) piece.pos.y++;
-      piece.pos.y--;
-      break;
+    case 'ArrowLeft':  actionLeft();   break;
+    case 'ArrowRight': actionRight();  break;
+    case 'ArrowDown':  actionDown();   break;
+    case 'ArrowUp':    actionRotate(); break;
+    case ' ': e.preventDefault(); actionDrop(); break;
   }
 });
+
+// ===== タッチボタン =====
+function bindBtn(id, fn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  // 長押しリピート用
+  let timer = null;
+  const REPEAT_DELAY = 120;
+
+  function press(e) {
+    e.preventDefault();
+    el.classList.add('pressed');
+    fn();
+    if (id === 'btn-left' || id === 'btn-right' || id === 'btn-down') {
+      timer = setInterval(fn, REPEAT_DELAY);
+    }
+  }
+  function release(e) {
+    e.preventDefault();
+    el.classList.remove('pressed');
+    clearInterval(timer); timer = null;
+  }
+  el.addEventListener('touchstart', press,   { passive: false });
+  el.addEventListener('touchend',   release, { passive: false });
+  el.addEventListener('touchcancel',release, { passive: false });
+  // マウスでもテスト可
+  el.addEventListener('mousedown', press);
+  el.addEventListener('mouseup',   release);
+  el.addEventListener('mouseleave',release);
+}
+
+bindBtn('btn-left',   actionLeft);
+bindBtn('btn-right',  actionRight);
+bindBtn('btn-down',   actionDown);
+bindBtn('btn-rotate', actionRotate);
+bindBtn('btn-drop',   actionDrop);
+
+// ===== スワイプジェスチャー (キャンバス上) =====
+let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+const SWIPE_THRESHOLD = 25;
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchStartTime = Date.now();
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  e.preventDefault();
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  const dt = Date.now() - touchStartTime;
+  const absDx = Math.abs(dx), absDy = Math.abs(dy);
+
+  if (absDx < 10 && absDy < 10 && dt < 200) {
+    // タップ → 回転
+    actionRotate();
+  } else if (absDx > absDy && absDx > SWIPE_THRESHOLD) {
+    dx > 0 ? actionRight() : actionLeft();
+  } else if (dy > SWIPE_THRESHOLD) {
+    actionDrop();
+  } else if (dy < -SWIPE_THRESHOLD) {
+    actionRotate();
+  }
+}, { passive: false });
 
 // スタートボタン
 document.getElementById('start-btn').addEventListener('click', startGame);
